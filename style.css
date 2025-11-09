@@ -1,0 +1,107 @@
+        body {
+            background-color: #fffaf0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .recipe-card {
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+
+        .card-title {
+            font-weight: bold;
+            color: #ff8c00;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .btn-warning {
+            background-color: #ff8c00;
+            border-color: #ff8c00;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: #e67e00;
+            border-color: #e67e00;
+            color: white;
+        }
+
+        .list-group-item {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: background-color 0.2s;
+        }
+
+        .list-group-item:hover {
+            background-color: #e9ecef;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .empty-state {
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .form-control:focus {
+            border-color: #ff8c00;
+            box-shadow: 0 0 0 0.2rem rgba(255, 140, 0, 0.25);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            .card {
+                margin-bottom: 20px;
+            }
+            .btn-group {
+                flex-direction: column;
+                gap: 5px;
+            }
+            .btn-group .btn {
+                width: 100%;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ff8c00;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e67e00;
+        }

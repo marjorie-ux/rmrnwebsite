@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: url(image\ \(6\).png);
+            background-repeat: no-repeat;
+            background-size: cover;
+            height: 100vh;
+            background-attachment: fixed;
+            background-color: #fffaf0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+
+        .recipe-card {
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+
+        .card-title {
+            font-weight: bold;
+            color: #ff8c00;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .btn-warning {
+            background-color: #ff8c00;
+            border-color: #ff8c00;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: #e67e00;
+            border-color: #e67e00;
+            color: white;
+        }
+
+        .list-group-item {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: background-color 0.2s;
+        }
+
+        .list-group-item:hover {
+            background-color: #e9ecef;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .empty-state {
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .form-control:focus {
+            border-color: #ff8c00;
+            box-shadow: 0 0 0 0.2rem rgba(255, 140, 0, 0.25);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            .card {
+                margin-bottom: 20px;
+            }
+            .btn-group {
+                flex-direction: column;
+                gap: 5px;
+            }
+            .btn-group .btn {
+                width: 100%;
+            }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ff8c00;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e67e00;
+        }
+
+        .recipe-image {
+            max-width: 50%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px 15px 0 0;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar " style="padding: 20px; background-color: rgb(187, 16, 206);">
+        <div class="container">
+            <a class="navbar-brand" href="#" onclick="showHomePage()">
+                <i class="bi bi-book-half me-2"></i>Recipe Manager
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="#" onclick="showCreatePage()">
+                    <i class="bi bi-plus-circle me-1"></i>Add Recipe
+                </a>
+            </div>  
+        </div>
+    </nav>
+
+    <div class="container my-5" id="content-area">
+        <div id="home-page">
+            <h1 class="text-center mb-4 text-warning">Your Recipes</h1>
+            <div id="recipes-container" class="row">
+            </div>
+        </div>
+
+        <div id="create-page" style="display: none;">
+            <h1 class="text-center mb-4 text-warning">Add New Recipe</h1>
+            <div id="create-alert" class="alert" style="display: none;"></div>
+            
+            <form id="create-form" class="row g-3 needs-validation">
+                <div class="col-md-12">
+                    <label for="title" class="form-label">Recipe Title</label>
+                    <input type="text" class="form-control" id="title" name="title" required>
+                    <div class="invalid-feedback">Title is required.</div>
+                </div>
+                <div class="col-md-12">
+                    <label for="image" class="form-label">Recipe Image (optional)</label>
+                    <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                </div>
+                <div class="col-md-12">
+                    <label for="ingredients" class="form-label">Ingredients (one per line)</label>
+                    <textarea class="form-control" id="ingredients" name="ingredients" rows="4" required placeholder="Flour&#10;2 Eggs&#10;1 cup Milk"></textarea>
+                    <div class="invalid-feedback">Ingredients are required.</div>
+                </div>
+                <div class="col-md-12">
+                    <label for="instructions" class="form-label">Instructions</label>
+                    <textarea class="form-control" id="instructions" name="instructions" rows="6" required placeholder="Step 1: Mix dry ingredients&#10;Step 2: Add wet ingredients&#10;Step 3: Cook for 5 minutes"></textarea>
+                    <div class="invalid-feedback">Instructions are required.</div>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-warning">Add Recipe</button>
+                    <button type="button" class="btn btn-secondary ms-2" onclick="showHomePage()">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="view-page" style="display: none;">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card recipe-card shadow-lg fade-in">
+                        <div class="card-header bg-warning text-white text-center">
+                            <h2 id="view-title"></h2>
+                            <small id="view-date"></small>
+                        </div>
+                        <div class="card-body">
+                            <div id="view-image-container" style="display: none;">
+                                <img id="view-image" class="recipe-image" alt="Recipe Image">
+                            </div>
+                            <h5 class="card-title text-warning"><i class="bi bi-list-ul me-2"></i>Ingredients</h5>
+                            <ul class="list-group list-group-flush" id="view-ingredients"></ul>
+
+                            <h5 class="card-title text-warning mt-4"><i class="bi bi-card-list me-2"></i>Instructions</h5>
+                            <ol class="list-group list-group-numbered" id="view-instructions"></ol>
+                        </div>
+                        <div class="card-footer bg-transparent text-center">
+                            <button class="btn btn-warning me-2" onclick="editCurrentRecipe()">
+                                <i class="bi bi-pencil me-1"></i>Edit
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="showHomePage()">
+                                <i class="bi bi-arrow-left me-1"></i>Back to Recipes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="edit-page" style="display: none; ">
+            <h1 class="text-center mb-4 text-warning">Edit Recipe</h1>
+            <div id="edit-alert" class="alert" style="display: none;"></div>
+            
+            <form id="edit-form" class="row g-3 needs-validation" >
+                <input type="hidden" id="edit-id">
+                <div class="col-md-12">
+                    <label for="edit-title" class="form-label">Recipe Title</label>
+                    <input type="text" class="form-control" id="edit-title" name="title" required>
+                    <div class="invalid-feedback">Title is required.</div>
+                </div>
+                <div class="col-md-12">
+                    <label for="edit-image" class="form-label">Recipe Image (optional)</label>
+                    <input type="file" class="form-control" id="edit-image" name="image" accept="image/*">
+                    <div id="edit-current-image" style="display: none; margin-top: 10px;">
+                        <small class="text-muted">Current Image:</small><br>
+                        <img id="edit-current-image-preview" class="recipe-image" style="max-width: 200px;" alt="Current Recipe Image">
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <label for="edit-ingredients" class="form-label">Ingredients (one per line)</label>
+                    <textarea class="form-control" id="edit-ingredients" name="ingredients" rows="4" required></textarea>
+                    <div class="invalid-feedback">Ingredients are required.</div>
+                </div>
+                <div class="col-md-12">
+                    <label for="edit-instructions" class="form-label">Instructions</label>
+                    <textarea class="form-control" id="edit-instructions" name="instructions" rows="6" required></textarea>
+                    <div class="invalid-feedback">Instructions are required.</div>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-warning">Update Recipe</button>
+                    <button type="button" class="btn btn-secondary ms-2" onclick="showHomePage()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this recipe? This action cannot be undone.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentRecipeId = null;
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadRecipes();
+            setupEventListeners();
+        });
+
+        // Event listeners setup
+        function setupEventListeners() {
+            // Form submissions
+            document.getElementById('create-form').addEventListener('submit', handleCreate);
+            document.getElementById('edit-form').addEventListener('submit', handleUpdate);
+            
+            // Delete confirmation
+            document.getElementById('confirm-delete').addEventListener('click', handleDelete);
+        }
+
+        // Data management functions
+        function getRecipes() {
+            const recipes = localStorage.getItem('recipes');
+            return recipes ? JSON.parse(recipes) : [];
+        }
+
+        function saveRecipes(recipes) {
+            localStorage.setItem('recipes', JSON.stringify(recipes));
+        }
+
+        function loadRecipes() {
+            const recipes = getRecipes();
+            const container = document.getElementById('recipes-container');
+            
+            container.innerHTML = '';
+            
+            if (recipes.length === 0) {
+                container.innerHTML = `
+                    <div class="col-12 empty-state">
+                        <i class="bi bi-journal-x display-1 text-muted mb-3"></i>
+                        <h3 class="text-muted">No recipes yet</h3>
+                        <p class="text-muted">Add your first recipe to get started!</p>
+                        <button class="btn btn-warning mt-3" onclick="showCreatePage()">
+                            <i class="bi bi-plus-circle me-1"></i>Add Recipe
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            recipes.forEach(recipe => {
+                const recipeElement = createRecipeCard(recipe);
+                container.appendChild(recipeElement);
+            });
+        }
+
+        function createRecipeCard(recipe) {
+            const col = document.createElement('div');
+            col.className = 'col-md-6 col-lg-4 mb-4 fade-in';
+            
+            const imageHtml = recipe.image ? `<img src="${recipe.image}" class="card-img-top" alt="Recipe Image">` : '';
+            
+            col.innerHTML = `
+                <div class="card recipe-card h-100 shadow-sm">
+                    ${imageHtml}
+                    <div class="card-body">
+                        <h5 class="card-title text-warning">${escapeHtml(recipe.title)}</h5>
+                        <p class="card-text"><strong>Ingredients:</strong> ${escapeHtml(recipe.ingredients.split('\n').slice(0, 3).join(', '))}${recipe.ingredients.split('\n').length > 3 ? '...' : ''}</p>
+                        <p class="card-text"><small class="text-muted">Added: ${formatDate(recipe.createdAt)}</small></p>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="btn-group w-100">
+                            <button class="btn btn-outline-warning btn-sm" onclick="viewRecipe(${recipe.id})">
+                                <i class="bi bi-eye me-1"></i>View
+                            </button>
+                            <button class="btn btn-warning btn-sm" onclick="editRecipe(${recipe.id})">
+                                <i class="bi bi-pencil me-1"></i>Edit
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="showDeleteModal(${recipe.id})">
+                                <i class="bi bi-trash me-1"></i>Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            return col;
+        }
+
+        // Page navigation functions
+        function showHomePage() {
+            document.getElementById('home-page').style.display = 'block';
+            document.getElementById('create-page').style.display = 'none';
+            document.getElementById('view-page').style.display = 'none';
+            document.getElementById('edit-page').style.display = 'none';
+            loadRecipes();
+        }
+
+        function showCreatePage() {
+            document.getElementById('home-page').style.display = 'none';
+            document.getElementById('create-page').style.display = 'block';
+            document.getElementById('view-page').style.display = 'none';
+            document.getElementById('edit-page').style.display = 'none';
+            
+            // Reset form
+            document.getElementById('create-form').reset();
+            document.getElementById('create-form').classList.remove('was-validated');
+            document.getElementById('create-alert').style.display = 'none';
+        }
+
+        function viewRecipe(id) {
+            const recipes = getRecipes();
+            const recipe = recipes.find(r => r.id === id);
+            
+            if (!recipe) {
+                showAlert('Recipe not found!', 'danger');
+                showHomePage();
+                return;
+            }
+
+            document.getElementById('view-title').textContent = recipe.title;
+            document.getElementById('view-date').textContent = `Added: ${formatDate(recipe.createdAt)}`;
+            
+            // Handle image
+            const imageContainer = document.getElementById('view-image-container');
+            const imageElement = document.getElementById('view-image');
+            if (recipe.image) {
+                imageElement.src = recipe.image;
+                imageContainer.style.display = 'block';
+            } else {
+                imageContainer.style.display = 'none';
+            }
+            
+            // Populate ingredients
+            const ingredientsList = document.getElementById('view-ingredients');
+            ingredientsList.innerHTML = '';
+            recipe.ingredients.split('\n').forEach(ingredient => {
+                if (ingredient.trim()) {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.textContent = ingredient.trim();
+                    ingredientsList.appendChild(li);
+                }
+            });
+
+            // Populate instructions
+            const instructionsList = document.getElementById('view-instructions');
+            instructionsList.innerHTML = '';
+            recipe.instructions.split('\n').forEach(instruction => {
+                if (instruction.trim()) {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.textContent = instruction.trim();
+                    instructionsList.appendChild(li);
+                }
+            });
+
+            currentRecipeId = id;
+            document.getElementById('home-page').style.display = 'none';
+            document.getElementById('create-page').style.display = 'none';
+            document.getElementById('view-page').style.display = 'block';
+            document.getElementById('edit-page').style.display = 'none';
+        }
+
+        function editRecipe(id) {
+            const recipes = getRecipes();
+            const recipe = recipes.find(r => r.id === id);
+            
+            if (!recipe) {
+                showAlert('Recipe not found!', 'danger');
+                showHomePage();
+                return;
+            }
+
+            document.getElementById('edit-id').value = recipe.id;
+            document.getElementById('edit-title').value = recipe.title;
+            document.getElementById('edit-ingredients').value = recipe.ingredients;
+            document.getElementById('edit-instructions').value = recipe.instructions;
+            
+            // Handle image
+            const currentImageDiv = document.getElementById('edit-current-image');
+            const currentImagePreview = document.getElementById('edit-current-image-preview');
+            if (recipe.image) {
+                currentImagePreview.src = recipe.image;
+                currentImageDiv.style.display = 'block';
+           
+            } else {
+                currentImageDiv.style.display = 'none';
+            }
+            
+            document.getElementById('edit-form').classList.remove('was-validated');
+            document.getElementById('edit-alert').style.display = 'none';
+            
+            currentRecipeId = id;
+            document.getElementById('home-page').style.display = 'none';
+            document.getElementById('create-page').style.display = 'none';
+            document.getElementById('view-page').style.display = 'none';
+            document.getElementById('edit-page').style.display = 'block';
+        }
+
+        function editCurrentRecipe() {
+            if (currentRecipeId) {
+                editRecipe(currentRecipeId);
+            }
+        }
+
+        // Utility function to convert file to base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // CRUD operations
+        async function handleCreate(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const form = event.target;
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated');
+                return;
+            }
+
+            const title = document.getElementById('title').value.trim();
+            const ingredients = document.getElementById('ingredients').value.trim();
+            const instructions = document.getElementById('instructions').value.trim();
+            
+            const imageFile = document.getElementById('image').files[0];
+            let imageBase64 = null;
+            if (imageFile) {
+                try {
+                    imageBase64 = await fileToBase64(imageFile);
+                } catch (error) {
+                    showAlert('Error processing image!', 'danger', 'create-alert');
+                    return;
+                }
+            }
+
+            const recipes = getRecipes();
+            const newRecipe = {
+                id: Date.now(), // Unique ID based on timestamp
+                title: title,
+                ingredients: ingredients,
+                instructions: instructions,
+                image: imageBase64,
+                createdAt: new Date().toISOString()
+            };
+
+            recipes.push(newRecipe);
+            saveRecipes(recipes);
+            
+            showAlert('Recipe added successfully!', 'success', 'create-alert');
+            setTimeout(() => {
+                showHomePage();
+            }, 1000);
+        }
+
+        async function handleUpdate(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const form = event.target;
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated');
+                return;
+            }
+
+            const id = parseInt(document.getElementById('edit-id').value);
+            const title = document.getElementById('edit-title').value.trim();
+            const ingredients = document.getElementById('edit-ingredients').value.trim();
+            const instructions = document.getElementById('edit-instructions').value.trim();
+            
+            const imageFile = document.getElementById('edit-image').files[0];
+            let imageBase64 = null;
+            if (imageFile) {
+                try {
+                    imageBase64 = await fileToBase64(imageFile);
+                } catch (error) {
+                    showAlert('Error processing image!', 'danger', 'edit-alert');
+                    return;
+                }
+            }
+
+            const recipes = getRecipes();
+            const recipeIndex = recipes.findIndex(r => r.id === id);
+            
+            if (recipeIndex === -1) {
+                showAlert('Recipe not found!', 'danger', 'edit-alert');
+                return;
+            }
+
+            recipes[recipeIndex] = {
+                ...recipes[recipeIndex],
+                title: title,
+                ingredients: ingredients,
+                instructions: instructions,
+                image: imageBase64 || recipes[recipeIndex].image // Keep existing image if no new one
+            };
+
+            saveRecipes(recipes);
+            
+            showAlert('Recipe updated successfully!', 'success', 'edit-alert');
+            setTimeout(() => {
+                showHomePage();
+            }, 1000);
+        }
+
+        function showDeleteModal(id) {
+            currentRecipeId = id;
+            deleteModal.show();
+        }
+
+        function handleDelete() {
+            if (!currentRecipeId) return;
+
+            const recipes = getRecipes();
+            const filteredRecipes = recipes.filter(r => r.id !== currentRecipeId);
+            
+            saveRecipes(filteredRecipes);
+            deleteModal.hide();
+            
+            showHomePage();
+            // Show temporary success message
+            const tempAlert = document.createElement('div');
+            tempAlert.className = 'alert alert-success alert-dismissible fade show position-fixed top-0 end-0 m-3';
+            tempAlert.style.zIndex = '1050';
+            tempAlert.innerHTML = `
+                Recipe deleted successfully!
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(tempAlert);
+            
+            setTimeout(() => {
+                tempAlert.remove();
+            }, 3000);
+        }
+
+        // Utility functions
+        function showAlert(message, type, elementId = null) {
+            const alert = elementId ? document.getElementById(elementId) : document.createElement('div');
+            
+            if (!elementId) {
+                alert.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+                alert.style.zIndex = '1050';
+                alert.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.body.appendChild(alert);
+                
+                setTimeout(() => {
+                    alert.remove();
+                }, 3000);
+            } else {
+                alert.className = `alert alert-${type}`;
+                alert.innerHTML = message;
+                alert.style.display = 'block';
+            }
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

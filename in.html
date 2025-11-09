@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Manager Preview</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f9f9f9; color: #333; margin: 0; padding: 0; }
+        .navbar { background-color: #ff6600; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .navbar a { color: white; text-decoration: none; margin: 0 15px; }
+        .container { max-width: 1200px; margin: 20px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .recipe-card { border: 1px solid #ddd; border-radius: 8px; padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .recipe-card img { max-width: 100%; height: 150px; object-fit: cover; border-radius: 5px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background-color: #ff6600; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
+        .footer { text-align: center; padding: 10px; background-color: #f9f9f9; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>Recipe Manager</h1>
+        <div><a href="#">Home</a><a href="#">Add Recipe</a><a href="#">About</a></div>
+    </div>
+    <div class="container">
+        <h2>All Recipes</h2>
+        <div class="recipe-grid">
+            <div class="recipe-card">
+                <img src="https://via.placeholder.com/300x150?text=Spaghetti+Carbonara" alt="Spaghetti Carbonara">
+                <h3>🍝 Spaghetti Carbonara</h3>
+                <p>Pasta, Eggs, Cheese...</p>
+                <button>View</button><button>Edit</button><button>Delete</button>
+            </div>
+            <div class="recipe-card">
+                <img src="https://via.placeholder.com/300x150?text=Chicken+Salad" alt="Chicken Salad">
+                <h3>🥗 Chicken Salad</h3>
+                <p>Chicken, Lettuce, Dressing...</p>
+                <button>View</button><button>Edit</button><button>Delete</button>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <h2>Add a New Recipe</h2>
+        <form>
+            <div class="form-group"><label>Title:</label><input type="text" value="Sample Recipe"></div>
+            <div class="form-group"><label>Ingredients:</label><textarea rows="5">Ingredient 1, Ingredient 2</textarea></div>
+            <div class="form-group"><label>Steps:</label><textarea rows="5">Step 1. Do this. Step 2. Do that.</textarea></div>
+            <div class="form-group"><label>Upload Image:</label><input type="file"></div>
+            <button>Submit Recipe</button>
+        </form>
+    </div>
+    <div class="footer"><p>&copy; 2025 Recipe Manager by Marjorie Ramoran</p></div>
+</body>
+</html>
